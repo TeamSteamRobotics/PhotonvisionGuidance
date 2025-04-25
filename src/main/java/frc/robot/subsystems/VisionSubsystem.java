@@ -17,6 +17,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase {
   private PhotonCamera[] cameras;
   private int numCameras;
+  class FiducialID {
+    public int id;
+    //public double 
+  }
   
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(String[] cameraNames) {
@@ -55,9 +59,18 @@ public class VisionSubsystem extends SubsystemBase {
     return seenTargets;
   }
 
+  /**DO NOT USE
+   * @return null
+   */
   public PhotonTrackedTarget getBestTarget(){
     List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
-
+    for(int i = 0; i < numCameras; i++){
+      List<PhotonPipelineResult> results = cameras[i].getAllUnreadResults();
+      for(int j = 0; j < results.size(); j++){
+        seenTargets.add(results.get(j).getBestTarget());
+      }
+    }
+    return null;
   }
   @Override
   public void periodic() {
