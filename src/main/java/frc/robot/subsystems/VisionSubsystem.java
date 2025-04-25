@@ -33,7 +33,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     for(int i = 0; i < numCameras; i++){
       seenTargets.addAll(cameras[i].getAllUnreadResults().stream().map((e) -> e.getTargets()).flatMap(List::stream).toList());
-      /* We have an array of cameras. We iterate over every camera, and add its seen targets to the list
+      /* We have an array of cameras. We iterate over every camera, and add seen targets to the list
        * getAllUnreadResults() returns a list of PhotonPipelineResults. stream() converts it into
        * a Stream, which one can use map() on. map() applies the lambda expression to every element
        * in the Stream, and returns a new Stream. flatMap(List::stream) flattens the Stream, although
