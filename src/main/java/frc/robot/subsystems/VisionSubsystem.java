@@ -1,87 +1,60 @@
-// package frc.robot.subsystems;
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-// import java.util.Map;
-// import java.util.TreeMap;
+package frc.robot.subsystems;
 
-// import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import frc.robot.LimelightHelpers;
-// import frc.robot.LimelightHelpers.RawFiducial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
-// public class VisionSubsystem extends SubsystemBase {
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
-//    public RawFiducial[] fiducials;
-//    TreeMap<Integer, processedAprilTag> AprilTags;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-//   class processedAprilTag{
-//     int id;
-//     double distToCamera;
-//     double distToRobot;
-//     double ambiguity;
-//     public processedAprilTag(int id, double dC, double dR, double ambig){
-//       this.id = id;
-//       distToCamera = dC;
-//       distToRobot = dR;
-//       ambiguity = ambig;
-//     }
-//   }
-//     // there is more then one data type and this is why we are packing them together here
-//     // It was exceedingly inconvenient to have to use both of them in different places
-
-
-//   // List of all apriltags on the field
-//   // Seen ones are non-null, indexed by Apriltag ID - 1
+public class VisionSubsystem extends SubsystemBase {
+  private PhotonCamera[] cameras;
+  private int numCameras;
   
-//   public VisionSubsystem() {
-//     AprilTags = new TreeMap<Integer, processedAprilTag>();
-//     LimelightHelpers.setPipelineIndex("", 1); 
-    
-//     // 0 is 2D Fiducials, 1 is 3D fiducials
-//   }
+  /** Creates a new VisionSubsystem. */
+  public VisionSubsystem(String[] cameraNames) {
+    numCameras = cameraNames.length;
+    cameras = new PhotonCamera[numCameras];
+    for(int i = 0; i < numCameras; i++){
+      cameras[i] = new PhotonCamera(cameraNames[i]);
+    }
+  }
 
+  public List<PhotonTrackedTarget> allTargets(){
+    List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
+    //PhotonPipelineResult test = new PhotonPipelineResult();
 
-//   @Override
-//   public void periodic() {
-//     fiducials = LimeLi
+    for(int i = 0; i < numCameras; i++){
+      seenTargets.addAll(cameras[i].getAllUnreadResults().stream().map((e) -> e.getTargets()).flatMap(List::stream).toList());
+      /* We have an array of cameras. We iterate over every camera, and add its seen targets to the list
+       * getAllUnreadResults() returns a list of PhotonPipelineResults. stream() converts it into
+       * a Stream, which one can use map() on. map() applies the lambda expression to every element
+       * in the Stream, and returns a new Stream. flatMap(List::stream) flattens the Stream, although
+       * I don't know why or how it works. toList() is obvious
+       */
+    }
+    return seenTargets;
+  }
 
-//     for(int i = 0; i < fidi){
-//       AprilTags.put(fiducial.id, new processedAprilTag(fiducial.id, fiducial.distToCamera, fiducial.distToRobot, fiducial.ambiguity));
-//     }
+  public List<PhotonTrackedTarget> allTargetsMultipleLines(){
+    List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
 
-//     //try{
-//     //  LimelightHelpers.LimelightTarget_Fiducial[] temp = LimelightHelpers.getLatestResults("").targets_Fiducials;
-   
-//     //LimelightHelpers.LimelightTarget_Fiducial[] temp = LimelightHelpers.getLatestResults("").targets_Fiducials;
-    
-//     // Early return to skip the below code if there is no valid target. Shouldn't be important, but may as well have it.
-    
-//     // This method will be called once per scheduler run
-//   }
-  
-//   public double getFiducialDistanceToCamera(int id) 
-//   {
-//     if(!AprilTags.containsKey(id)){
-//       return -1;
-//     }
-//     return AprilTags.get(id).distToCamera;
-//   }
-//   public double getGivenFiducialDistance(int id){
-//     LimelightHelpers.getLatestResults("limelight").targets_Fiducials[]
-    
-//   /*   if(id < 0 || id > 21){
-//       return -1; //Out of Bounds
-//     }
-    
-//     if(AprilTags.get(id) == null){
-//       return -1; //Apriltag not seen
-//     }
-    
-//     double rawDistance = getFiducialDistanceToCamera(id);
-//     double hOffset = AprilTags.get(id);
-//     double vOffset = AprilTags[id].processedAprilTag.ty; // angle offsets
-//     double horizontalAdjustedDistance = rawDistance * Math.cos(Math.toRadians(hOffset));
-//     double finalApproxDist = horizontalAdjustedDistance * Math.cos(Math.toRadians(vOffset));
-//     return finalApproxDist; // TODO: [pray]
-//   }
-//   //SmartDashboard.putNumber("Limelight Distance", orderedDistances);*/
-// }
-// }
+    for(int i = 0; i < numCameras; i++){
+      PhotonPipelineResult result = cameras[i].getLatestResult();
+      seenTargets.addAll(result.getTargets());
+      // .forEach((e) -> e.getTargets())
+    }
+    return seenTargets;
+  }
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+}
