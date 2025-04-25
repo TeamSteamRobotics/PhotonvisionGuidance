@@ -47,11 +47,17 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
 
     for(int i = 0; i < numCameras; i++){
-      PhotonPipelineResult result = cameras[i].getLatestResult();
-      seenTargets.addAll(result.getTargets());
-      // .forEach((e) -> e.getTargets())
+      List<PhotonPipelineResult> results = cameras[i].getAllUnreadResults();
+      for(int j = 0; j < results.size(); j++){
+        seenTargets.addAll(results.get(j).getTargets());
+      }
     }
     return seenTargets;
+  }
+
+  public PhotonTrackedTarget getBestTarget(){
+    List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
+
   }
   @Override
   public void periodic() {
