@@ -13,6 +13,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.AprilVisionSubsystem.Coordinate;
 
 public class VisionSubsystem extends SubsystemBase {
   private PhotonCamera[] cameras;
@@ -21,6 +22,15 @@ public class VisionSubsystem extends SubsystemBase {
     public int id;
     //public double 
   }
+  public class Coordinate {
+    public double x;
+    public double y;
+    public double z;
+    public double rx;
+    public double ry;
+    public double rz;
+    public boolean aprilTagVisible;
+}
   
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem(String[] cameraNames) {
@@ -36,7 +46,7 @@ public class VisionSubsystem extends SubsystemBase {
     //PhotonPipelineResult test = new PhotonPipelineResult();
 
     for(int i = 0; i < numCameras; i++){
-      seenTargets.addAll(cameras[i].getAllUnreadResults().stream().map((e) -> e.getTargets()).flatMap(List::stream).toList());
+      seenTargets.addAll(cameras[i].getAllUnreadResults().stream().map((e) -> e.hasTargets() ? e.getTargets() : null).flatMap(List::stream).toList());
       /* We have an array of cameras. We iterate over every camera, and add seen targets to the list
        * getAllUnreadResults() returns a list of PhotonPipelineResults. stream() converts it into
        * a Stream, which one can use map() on. map() applies the lambda expression to every element
@@ -47,13 +57,37 @@ public class VisionSubsystem extends SubsystemBase {
     return seenTargets;
   }
 
+  public List<PhotonPipelineResult> allUnreadResults(){
+    List<PhotonPipelineResult> seenTargets = new ArrayList<>();
+    
+    for(int i = 0; i < numCameras; i++){
+      seenTargets.addAll(cameras[i].getAllUnreadResults());
+    }
+    return seenTargets;
+  }
+
+  public enum ReturnTarget{
+    TARGET,
+    ROBOT,
+    FIELD
+  }
+  
+  public Coordinate getCoordinates(int[] ids, ReturnTarget rt){
+    Coordinate coordinate = new Coordinate();
+    for(int i = 0; i < ids.length; i++){
+      coordinate = getCoordinates(ids[i], rt, coordinate); //TODO: Implement versiom with given id
+    }
+  }
+
   public List<PhotonTrackedTarget> allTargetsMultipleLines(){
     List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
 
     for(int i = 0; i < numCameras; i++){
       List<PhotonPipelineResult> results = cameras[i].getAllUnreadResults();
       for(int j = 0; j < results.size(); j++){
-        seenTargets.addAll(results.get(j).getTargets());
+        if(results.get(j).hasTargets()){
+          seenTargets.addAll(results.get(j).getTargets());
+        }
       }
     }
     return seenTargets;
@@ -76,4 +110,6 @@ public class VisionSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
 }
+
