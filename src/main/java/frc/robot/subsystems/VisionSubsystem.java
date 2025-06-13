@@ -98,16 +98,22 @@ public class VisionSubsystem extends SubsystemBase {
     ROBOT,
     FIELD
   }
-  
+  /** 
+   * Recommended to not use, mostly for backwards compatibility with Kessler's code
+   * @deprecated
+   * @param ids - Array of fiducial IDs
+   * @param rt - Enum, only TARGET is supported
+   * @return A <b>Coordinate</b>, with only the <b>z</b> field set
+  */
   public Coordinate getCoordinates(int[] ids, ReturnTarget rt){
     Coordinate coordinate = new Coordinate();
     for(int i = 0; i < ids.length; i++){
-      coordinate = getCoordinates(ids[i], rt); //TODO: Implement versiom with given id
+      coordinate = getCoordinates(ids[i], rt); //DONE: Implement versiom with given id
       if(coordinate.aprilTagVisible){
         return coordinate;
       }
     }
-    return null; //TODO: Uh Oh :3
+    return new Coordinate(); //TODO: Uh Oh :3
   }
 
   public Coordinate getCoordinates(int id, ReturnTarget rt){
