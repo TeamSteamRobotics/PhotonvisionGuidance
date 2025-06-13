@@ -309,8 +309,8 @@ public class RobotContainer {
     // operator.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.ShootPID(shooter.getTargetSpeed() - Constants.Shooter.speedIncrement))));
   }
   public double getDistance(){ // TODO: god help me again :3
-    if(m_vision.getCoordinates(new int[]{4, 5}, ReturnTarget.TARGET).aprilTagVisible){ // TODO: add fIDs for other side of barge
-        return m_vision.getCoordinates(new int[]{4, 5}, ReturnTarget.TARGET).z;
+    if(m_vision.getCoordinates(new int[]{4, 5, 14, 15}, ReturnTarget.TARGET).aprilTagVisible){ // TODO: add fIDs for other side of barge
+        return m_vision.getCoordinates(new int[]{4, 5, 14, 15}, ReturnTarget.TARGET).z;
     }
     return -1;
   }

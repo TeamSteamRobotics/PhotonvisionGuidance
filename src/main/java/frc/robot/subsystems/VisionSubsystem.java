@@ -30,6 +30,18 @@ public class VisionSubsystem extends SubsystemBase {
     public double ry;
     public double rz;
     public boolean aprilTagVisible;
+    public Coordinate(){
+      aprilTagVisible = false;
+    }
+    public Coordinate(double x, double y, double z, double rx, double ry, double rz, boolean aprilTagVisible){
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.rx = rx;
+      this.ry = ry;
+      this.rz = rz;
+      this.aprilTagVisible = aprilTagVisible;
+    }
 }
   
   /** Creates a new VisionSubsystem. */
@@ -56,6 +68,21 @@ public class VisionSubsystem extends SubsystemBase {
     }
     return seenTargets;
   }
+  public List<PhotonTrackedTarget> allTargets(int cameraId){
+    List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
+    //PhotonPipelineResult test = new PhotonPipelineResult();
+
+    
+    seenTargets.addAll(cameras[cameraId].getAllUnreadResults().stream().map((e) -> e.hasTargets() ? e.getTargets() : null).flatMap(List::stream).toList());
+    /* We have an array of cameras. We iterate over every camera, and add seen targets to the list
+      * getAllUnreadResults() returns a list of PhotonPipelineResults. stream() converts it into
+      * a Stream, which one can use map() on. map() applies the lambda expression to every element
+      * in the Stream, and returns a new Stream. flatMap(List::stream) flattens the Stream, although
+      * I don't know why or how it works. toList() is obvious
+      */
+    
+    return seenTargets;
+  }
 
   public List<PhotonPipelineResult> allUnreadResults(){
     List<PhotonPipelineResult> seenTargets = new ArrayList<>();
@@ -75,8 +102,45 @@ public class VisionSubsystem extends SubsystemBase {
   public Coordinate getCoordinates(int[] ids, ReturnTarget rt){
     Coordinate coordinate = new Coordinate();
     for(int i = 0; i < ids.length; i++){
-      coordinate = getCoordinates(ids[i], rt, coordinate); //TODO: Implement versiom with given id
+      coordinate = getCoordinates(ids[i], rt); //TODO: Implement versiom with given id
+      if(coordinate.aprilTagVisible){
+        return coordinate;
+      }
     }
+    return null; //TODO: Uh Oh :3
+  }
+
+  public Coordinate getCoordinates(int id, ReturnTarget rt){
+    switch(rt){
+      case TARGET:
+        return TargetPositionRelativeToCamera(id);
+      default:
+        System.out.println("Attempting to find coordinates in different space. Check VisionSubsystem.java");
+        return new Coordinate();
+    }
+  }
+
+  public Coordinate TargetPositionRelativeToCamera(int id){
+    //return new Coordinate();
+    List<PhotonTrackedTarget> allApriltagTargets = allTargets();
+    boolean aprilTagVisible = false;
+    PhotonTrackedTarget target = new PhotonTrackedTarget();
+    int fiducialId;
+    Coordinate coordinate = new Coordinate();
+    for(int i = 0; i < allApriltagTargets.size(); i++){
+      if(allApriltagTargets.get(i).fiducialId == id){
+        aprilTagVisible = true;
+        target = allApriltagTargets.get(i);
+        fiducialId = i;
+        break;
+      }
+    }
+    if(!aprilTagVisible){
+      return new Coordinate();
+    }
+    coordinate.z = target.getBestCameraToTarget().getZ();
+    coordinate.aprilTagVisible = aprilTagVisible;
+    return coordinate;
   }
 
   public List<PhotonTrackedTarget> allTargetsMultipleLines(){
