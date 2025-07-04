@@ -119,14 +119,14 @@ public class VisionSubsystem extends SubsystemBase {
   public Coordinate getCoordinates(int id, ReturnTarget rt){
     switch(rt){
       case TARGET:
-        return TargetPositionRelativeToCamera(id);
+        return depTargetPositionRelativeToCamera(id);
       default:
         System.out.println("Attempting to find coordinates in different space. Check VisionSubsystem.java");
         return new Coordinate();
     }
   }
 
-  public Coordinate TargetPositionRelativeToCamera(int id){
+  public Coordinate depTargetPositionRelativeToCamera(int id){
     //return new Coordinate();
     List<PhotonTrackedTarget> allApriltagTargets = allTargets();
     boolean aprilTagVisible = false;
@@ -147,6 +147,51 @@ public class VisionSubsystem extends SubsystemBase {
     coordinate.z = target.getBestCameraToTarget().getZ();
     coordinate.aprilTagVisible = aprilTagVisible;
     return coordinate;
+  }
+
+  public PhotonTrackedTarget getSelectFiducial(int id){
+    PhotonTrackedTarget targetFiducial;
+    List<PhotonTrackedTarget> seenFiducials;
+    List<PhotonPipelineResult> results = allUnreadResults();
+
+    // Big block just gets fiducial of given ID 
+    for(int i = 0; i < results.size(); i++){
+      System.out.println(id);
+      if(results.get(i).hasTargets()){
+        System.out.println(id);
+        seenFiducials = results.get(i).getTargets();
+        for(int j = 0; j < seenFiducials.size(); j++){
+          targetFiducial = seenFiducials.get(j);
+          //System.out.println(targetFiducial.getFiducialId());
+          //System.out.println(id);
+          if(targetFiducial.getFiducialId() == id){
+            System.out.println("got to proper fiducial");
+            return targetFiducial;
+          }
+        }
+      }
+    }
+    targetFiducial = new PhotonTrackedTarget();
+    return targetFiducial;
+  }
+
+  /**
+   * Logic error somewhere in here
+   * @param ids
+   * @return
+   */
+  public PhotonTrackedTarget getSelectFiducial(int[] ids){
+    PhotonTrackedTarget targetFiducial;
+    for(int i = 0; i < ids.length; i++){
+      targetFiducial = getSelectFiducial(ids[i]);
+      
+      if(!(targetFiducial.getBestCameraToTarget() == null)){
+        System.out.println("getting actual fid");
+        return targetFiducial;
+      }
+      
+    }
+    return new PhotonTrackedTarget();
   }
 
   public List<PhotonTrackedTarget> allTargetsMultipleLines(){

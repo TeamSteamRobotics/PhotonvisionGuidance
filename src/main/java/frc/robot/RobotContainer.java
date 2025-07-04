@@ -58,9 +58,10 @@ import frc.robot.commands.Shooter.RollGreen;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.AprilVisionSubsystem.Coordinate;
-import frc.robot.subsystems.AprilVisionSubsystem.ReturnTarget;
-//import frc.robot.subsystems.VisionSubsystem;
+//import frc.robot.subsystems.AprilVisionSubsystem.ReturnTarget;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -76,9 +77,12 @@ import frc.robot.commands.PathPlanner.StopOrange;
 import frc.robot.commands.PathPlanner.StartBlack;
 import frc.robot.commands.PathPlanner.StopBlack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -92,7 +96,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake;
   private final ShooterSubsystem m_shooter;
   private final ClimbSubsystem m_climb;
-  private final AprilVisionSubsystem m_vision;
+  private VisionSubsystem m_vision;
   //private final VisionSubsystem vision;
   
   // Controllers
@@ -121,6 +125,10 @@ public class RobotContainer {
   private final Trigger reset = m_driverController.b();
   private final Trigger Xlock = m_driverController.x();
 
+  private double distance; //TODO: Really shitty hack to deal with intermittent vision results
+
+  //private String[] cameras;
+
   //Rumble Test
   //private final Trigger rumbleTest = m_bluetoothController.rightTrigger();
 
@@ -132,14 +140,15 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer()
-   {
-
+  {
+    
    // SmartDashboard.getnum
 
-    m_intake = new IntakeSubsystem();
-    m_shooter = new ShooterSubsystem();
-    m_climb = new ClimbSubsystem();
-    m_vision = new AprilVisionSubsystem();
+      m_intake = new IntakeSubsystem();
+      m_shooter = new ShooterSubsystem();
+      m_climb = new ClimbSubsystem();
+      m_vision = new VisionSubsystem(new String[]{"Test Camera"});
+      
 
 
       // Pathplanner command registering
@@ -309,10 +318,18 @@ public class RobotContainer {
     // operator.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.ShootPID(shooter.getTargetSpeed() - Constants.Shooter.speedIncrement))));
   }
   public double getDistance(){ // TODO: god help me again :3
-    if(m_vision.getCoordinates(new int[]{4, 5, 14, 15}, ReturnTarget.TARGET).aprilTagVisible){ // TODO: add fIDs for other side of barge
-        return m_vision.getCoordinates(new int[]{4, 5, 14, 15}, ReturnTarget.TARGET).z;
+    // if(m_vision.getCoordinates(new int[]{4, 5, 14, 15}, VisionSubsystem.ReturnTarget.TARGET).aprilTagVisible){ // TODO: add fIDs for other side of barge
+    //     return m_vision.getCoordinates(new int[]{4, 5, 14, 15}, VisionSubsystem.ReturnTarget.TARGET).z;
+    // }
+    PhotonTrackedTarget fiducial = m_vision.getSelectFiducial(6); //TODO: shitty hack, get it to work with multiple fiducial ids, but I'm too exhausted mentally to do that
+    //PhotonTrackedTarget fiducial = m_vision.getSelectFiducial(new int[]{4,5,6});
+    if(fiducial.bestCameraToTarget == null){
+      //System.out.println("Null Result");
+      return distance;
     }
-    return -1;
+    distance = fiducial.bestCameraToTarget.getX();
+    System.out.println(distance);
+    return distance;
   }
   
 
