@@ -318,11 +318,11 @@ public class RobotContainer {
     // operator.povDown().whileTrue(new RepeatCommand(new InstantCommand(() -> shooter.ShootPID(shooter.getTargetSpeed() - Constants.Shooter.speedIncrement))));
   }
   public double getDistance(){ // TODO: god help me again :3
-    // if(m_vision.getCoordinates(new int[]{4, 5, 14, 15}, VisionSubsystem.ReturnTarget.TARGET).aprilTagVisible){ // TODO: add fIDs for other side of barge
+    // if(m_vision.getCoordinates(new int[]{4, 5, 14, 15}, VisionSubsystem.ReturnTarget.TARGET).aprilTagVisible){ 
     //     return m_vision.getCoordinates(new int[]{4, 5, 14, 15}, VisionSubsystem.ReturnTarget.TARGET).z;
     // }
-    PhotonTrackedTarget fiducial = m_vision.getSelectFiducial(6); //TODO: shitty hack, get it to work with multiple fiducial ids, but I'm too exhausted mentally to do that
-    //PhotonTrackedTarget fiducial = m_vision.getSelectFiducial(new int[]{4,5,6});
+    //PhotonTrackedTarget fiducial = m_vision.getSelectFiducial(6); //TODO: shitty hack, get it to work with multiple fiducial ids, but I'm too exhausted mentally to do that
+    PhotonTrackedTarget fiducial = m_vision.getSelectFiducial(new int[]{4,5,6});
     if(fiducial.bestCameraToTarget == null){
       //System.out.println("Null Result");
       return distance;

@@ -13,11 +13,12 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.AprilVisionSubsystem.Coordinate;
+//import frc.robot.subsystems.AprilVisionSubsystem.Coordinate;
 
 public class VisionSubsystem extends SubsystemBase {
   private PhotonCamera[] cameras;
   private int numCameras;
+  private List<PhotonPipelineResult> results;
   class FiducialID {
     public int id;
     //public double 
@@ -51,6 +52,9 @@ public class VisionSubsystem extends SubsystemBase {
     for(int i = 0; i < numCameras; i++){
       cameras[i] = new PhotonCamera(cameraNames[i]);
     }
+  }
+  public PhotonPipelineResult latestResult(){
+    return results.get(results.size() - 1);
   }
 
   public List<PhotonTrackedTarget> allTargets(){
@@ -131,13 +135,13 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonTrackedTarget> allApriltagTargets = allTargets();
     boolean aprilTagVisible = false;
     PhotonTrackedTarget target = new PhotonTrackedTarget();
-    int fiducialId;
+    //int fiducialId;
     Coordinate coordinate = new Coordinate();
     for(int i = 0; i < allApriltagTargets.size(); i++){
       if(allApriltagTargets.get(i).fiducialId == id){
         aprilTagVisible = true;
         target = allApriltagTargets.get(i);
-        fiducialId = i;
+        //fiducialId = i;
         break;
       }
     }
@@ -152,7 +156,7 @@ public class VisionSubsystem extends SubsystemBase {
   public PhotonTrackedTarget getSelectFiducial(int id){
     PhotonTrackedTarget targetFiducial;
     List<PhotonTrackedTarget> seenFiducials;
-    List<PhotonPipelineResult> results = allUnreadResults();
+    //List<PhotonPipelineResult> results = allUnreadResults();
 
     // Big block just gets fiducial of given ID 
     for(int i = 0; i < results.size(); i++){
@@ -198,7 +202,7 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
 
     for(int i = 0; i < numCameras; i++){
-      List<PhotonPipelineResult> results = cameras[i].getAllUnreadResults();
+      //List<PhotonPipelineResult> results = cameras[i].getAllUnreadResults();
       for(int j = 0; j < results.size(); j++){
         if(results.get(j).hasTargets()){
           seenTargets.addAll(results.get(j).getTargets());
@@ -214,7 +218,7 @@ public class VisionSubsystem extends SubsystemBase {
   public PhotonTrackedTarget getBestTarget(){
     List<PhotonTrackedTarget> seenTargets = new ArrayList<>();
     for(int i = 0; i < numCameras; i++){
-      List<PhotonPipelineResult> results = cameras[i].getAllUnreadResults();
+      //List<PhotonPipelineResult> results = cameras[i].getAllUnreadResults();
       for(int j = 0; j < results.size(); j++){
         seenTargets.add(results.get(j).getBestTarget());
       }
@@ -224,6 +228,7 @@ public class VisionSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    results = allUnreadResults();
   }
 
 }

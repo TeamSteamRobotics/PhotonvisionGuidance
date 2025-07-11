@@ -13,6 +13,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -41,6 +46,13 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
     public static final int kBluetoothControllerPort = 2; 
+  }
+  public class Vision{
+    public static final Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+    /**
+     * List of standard deviations, 0 is x in meters, 1 is y in meters, 2 is heading in radians
+     */
+    public static final double[] robotPoseStdDev = {1d,1d,1d};
   }
   public class DriveMotors {
     public class FrontLeft {
