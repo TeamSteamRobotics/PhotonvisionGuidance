@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.photonvision.PhotonCamera;
@@ -53,8 +54,11 @@ public class VisionSubsystem extends SubsystemBase {
       cameras[i] = new PhotonCamera(cameraNames[i]);
     }
   }
-  public PhotonPipelineResult latestResult(){
-    return results.get(results.size() - 1);
+  public Optional<PhotonPipelineResult> latestResult(){
+    if(results.size() != 0){
+      return Optional.of(results.get(results.size() - 1));
+    }
+    return Optional.empty();
   }
 
   public List<PhotonTrackedTarget> allTargets(){

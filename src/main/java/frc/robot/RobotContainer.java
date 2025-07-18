@@ -18,8 +18,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.numbers.*;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -49,6 +51,7 @@ import frc.robot.commands.Climb.RaiseWinch;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AprilVisionSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.EstimatorSubsystem;
 import frc.robot.commands.Intake.Pivots;
 import frc.robot.commands.Intake.Roll;
 import frc.robot.commands.Intake.Tests.PivotTest;
@@ -79,10 +82,13 @@ import frc.robot.commands.PathPlanner.StopBlack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -96,7 +102,8 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake;
   private final ShooterSubsystem m_shooter;
   private final ClimbSubsystem m_climb;
-  private VisionSubsystem m_vision;
+  private final VisionSubsystem m_vision;
+  private EstimatorSubsystem m_estimate;
   //private final VisionSubsystem vision;
   
   // Controllers
@@ -135,9 +142,16 @@ public class RobotContainer {
   //Supplier<Coordinate> coordinateSupplier; // god help me :3
 
   // Dashboard inputs
- private LoggedDashboardChooser<Command> autoChooser;
+  private LoggedDashboardChooser<Command> autoChooser;
   // private 
 
+  
+  // private Consumer<Matrix<N3, N1>> addBS(double b){
+  //   return null;
+  // }
+  // private Function<Double, Consumer<Matrix<N3, N1>>> addVisionMeasurement(Pose2d a){
+  //   return (double b) -> ((Matrix<N3, N1>) -> drive)
+  // }
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer()
   {
@@ -148,6 +162,8 @@ public class RobotContainer {
       m_shooter = new ShooterSubsystem();
       m_climb = new ClimbSubsystem();
       m_vision = new VisionSubsystem(new String[]{"Test Camera"});
+      
+      
       
 
 
@@ -206,6 +222,8 @@ public class RobotContainer {
         break;
     }
 
+    //m_estimate = new EstimatorSubsystem((Pose2d a) -> ((Double b) -> ((Matrix<N3, N1> c) -> drive.addVisionMeasurement(a, b, c))), m_vision);
+    m_estimate = new EstimatorSubsystem(drive, m_vision);
   
     //Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser("Taxi - Blue - Start 3"));

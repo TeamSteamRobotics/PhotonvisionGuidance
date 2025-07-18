@@ -48,11 +48,19 @@ public final class Constants {
     public static final int kBluetoothControllerPort = 2; 
   }
   public class Vision{
+    /**
+     * Transformation from robot space to camera space, or from center of robot oriented forward to camera forward
+     */
     public static final Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
     /**
      * List of standard deviations, 0 is x in meters, 1 is y in meters, 2 is heading in radians
      */
-    public static final double[] robotPoseStdDev = {1d,1d,1d};
+    public static final double[] robotPoseStdDev = {0.000508d, 0.002683d, 0.000763};
+    /*
+     * x Standard Deviation: 5.080060294706316E-4
+     * y Standard Deviation: 0.0026839152279527845
+     * theta Standard Deviation: 7.633268305608407E-4
+     */
   }
   public class DriveMotors {
     public class FrontLeft {
