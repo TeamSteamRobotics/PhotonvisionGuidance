@@ -38,14 +38,17 @@ public class EstimatorSubsystem extends SubsystemBase {
   Drive m_drive;
   Pose2d robotPose;
   public static final Matrix<N3, N1> robotPoseStdDev = new Matrix<N3, N1>(Nat.N3(), Nat.N1());
-  // AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  AprilTagFieldLayout aprilTagFieldLayout;// = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
   Optional<PhotonPipelineResult> latestResult;
-  //public EstimatorSubsystem(Function<Pose2d, Function<Double, Consumer<Matrix<N3, N1>>>> addMeasurement, VisionSubsystem vision) {
+  // public EstimatorSubsystem(Function<Pose2d, Function<Double, Consumer<Matrix<N3, N1>>>> addMeasurement, VisionSubsystem vision) {
   public EstimatorSubsystem(Drive drive, VisionSubsystem vision) {
     //addVisionMeasurement = addMeasurement;
     m_drive = drive;
-    // estimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.robotToCam);
+    aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape); // See if this works, and if it doesn't, fill in the data in Constants
+    // aprilTagFieldLayout = new AprilTagFieldLayout(Constants.Vision.FieldPositions.aprilTagList, 0, 0);
+    estimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.robotToCam);
     m_vision = vision;
+    
     robotPoseStdDev.set(0, 0, Constants.Vision.robotPoseStdDev[0]);
     robotPoseStdDev.set(1, 0, Constants.Vision.robotPoseStdDev[1]);
     robotPoseStdDev.set(2, 0, Constants.Vision.robotPoseStdDev[2]);
@@ -76,17 +79,18 @@ public class EstimatorSubsystem extends SubsystemBase {
     if(latestResult.isEmpty()){
       return;
     }
-    // // This method will be called once per scheduler run
-    // estimatePose = estimator.update(m_vision.latestResult().get());
-    // if(estimatePose.isPresent()){
-    //   // robotPose = estimatePose.get().estimatedPose.toPose2d();
-    //   // xValues.add(robotPose.getX());
-    //   // yValues.add(robotPose.getY());
-    //   // thetaValues.add(robotPose.getRotation().getRadians());
-    //   addVisionMeasurement.apply(estimatePose.get().estimatedPose.toPose2d()).apply(Timer.getFPGATimestamp()).accept(robotPoseStdDev);
-    // }
+    // This method will be called once per scheduler run
+    estimatePose = estimator.update(m_vision.latestResult().get());
+    if(estimatePose.isPresent()){
+      robotPose = estimatePose.get().estimatedPose.toPose2d();
+      // xValues.add(robotPose.getX());
+      // yValues.add(robotPose.getY());
+      // thetaValues.add(robotPose.getRotation().getRadians());
+      // addVisionMeasurement.apply(estimatePose.get().estimatedPose.toPose2d()).apply(Timer.getFPGATimestamp()).accept(robotPoseStdDev);
+      m_drive.addVisionMeasurement(robotPose, Timer.getFPGATimestamp(), robotPoseStdDev);
+    }
     // addVisionMeasurement.apply(new Pose2d()).apply(Timer.getFPGATimestamp()).accept(robotPoseStdDev);
-    m_drive.addVisionMeasurement(new Pose2d(), Timer.getFPGATimestamp(), robotPoseStdDev);
+    
     // System.out.println("x Standard Deviation: " + Double.toString(findStandardDeviation(xValues)));
     // System.out.println("y Standard Deviation: " + Double.toString(findStandardDeviation(yValues)));
     // System.out.println("theta Standard Deviation: " + Double.toString(findStandardDeviation(thetaValues)));

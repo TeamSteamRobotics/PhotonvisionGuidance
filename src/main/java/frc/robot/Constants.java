@@ -13,6 +13,10 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.*;
@@ -61,6 +65,77 @@ public final class Constants {
      * y Standard Deviation: 0.0026839152279527845
      * theta Standard Deviation: 7.633268305608407E-4
      */
+    public class FieldPositions {
+      public static final double fieldLength = 0;
+      public static final double fieldWidth = 0;
+      public static final ChainList<AprilTag> aprilTagList = new ChainList<AprilTag>()
+        .chainAdd(new AprilTag(1, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(2, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(3, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(4, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(5, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(6, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(7, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(8, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(9, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(10, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(11, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(12, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(13, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(14, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(15, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(16, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(17, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(18, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(19, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(20, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(21, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))))
+        .chainAdd(new AprilTag(22, 
+          new Pose3d(new Translation3d(0, 0, 0), 
+          new Rotation3d(new Quaternion(0, 0, 0, 0)))));
+    }
   }
   public class DriveMotors {
     public class FrontLeft {
