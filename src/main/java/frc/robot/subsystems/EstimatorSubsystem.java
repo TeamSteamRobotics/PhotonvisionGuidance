@@ -44,8 +44,8 @@ public class EstimatorSubsystem extends SubsystemBase {
   public EstimatorSubsystem(Drive drive, VisionSubsystem vision) {
     //addVisionMeasurement = addMeasurement;
     m_drive = drive;
-    aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape); // See if this works, and if it doesn't, fill in the data in Constants
-    // aprilTagFieldLayout = new AprilTagFieldLayout(Constants.Vision.FieldPositions.aprilTagList, 0, 0);
+    // aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape); // See if this works, and if it doesn't, fill in the data in Constants
+    aprilTagFieldLayout = new AprilTagFieldLayout(Constants.Vision.FieldPositions.aprilTagList, Constants.Vision.FieldPositions.fieldLength, Constants.Vision.FieldPositions.fieldWidth);
     estimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.robotToCam);
     m_vision = vision;
     
